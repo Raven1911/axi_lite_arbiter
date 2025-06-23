@@ -77,41 +77,33 @@ module axi_lite_arbiter #(
  
     //Label State
     localparam  START   =   'd0,
-                DECODE  =   'd1,
-
-                S1      =   'd10,
-                S2      =   'd11,
-                S3      =   'd12,
-                S4      =   'd13,
-                S5      =   'd14,
-                S6      =   'd15,
-                S7      =   'd16,
-
                 //state child
-                S1_0    =   'd31,
+                S1_0    =   'd1,
 
-                S2_1    =   'd32,
+                S2_1    =   'd2,
                 
-                S3_0    =   'd33,
-                S3_1    =   'd34,
+                S3_0    =   'd3,
+                S3_1    =   'd4,
 
-                S4_2    =   'd35,
+                S4_2    =   'd5,
 
-                S5_0    =   'd36,
-                S5_2    =   'd37,
+                S5_0    =   'd6,
+                S5_2    =   'd7,
 
-                S6_1    =   'd38,
-                S6_2    =   'd39,
+                S6_1    =   'd8,
+                S6_2    =   'd9,
 
-                S7_0    =   'd40,
-                S7_1    =   'd41,
-                S7_2    =   'd42;
+                S7_0    =   'd10,
+                S7_1    =   'd11,
+                S7_2    =   'd12;
         
 
 
     //variable
-    reg     [63:0]              state_reg, state_next;
+    reg     [3:0]              state_reg, state_next;
     reg     [NUM_MASTERS-1:0]   capture_awvalid_reg;
+
+
     reg                         active_capture_reg, active_capture_next;
 
     //reg_IO
@@ -128,23 +120,27 @@ module axi_lite_arbiter #(
     reg                         select_s_axi_bready_reg, select_s_axi_bready_next;
     reg     [NUM_MASTERS-1:0]   select_m_axi_bvalid_reg, select_m_axi_bvalid_next; 
 
+
+    wire enb_awvalid, enb_wvalid, enb_bready;
+
     //sequential circuit
     always @(posedge clk or negedge resetn) begin
         if (~resetn) begin
-            state_reg <= START;
-            active_capture_reg <= 0;
-            capture_awvalid_reg <= 0;
+            state_reg                   <= START;
+            active_capture_reg          <= 0;
+            capture_awvalid_reg         <= 0;
 
-            select_s_axi_awaddr_reg <= 0;
-            select_s_axi_awvalid_reg <= 0;
-            select_m_axi_awready_reg <= 0;
-            select_s_axi_awprot_reg  <= 0;
-            select_s_axi_wvalid_reg <= 0;
-            select_m_axi_wready_reg <= 0;
-            select_s_axi_wdata_reg <= 0;
-            select_s_axi_wstrb_reg <= 0;
-            select_s_axi_bready_reg <= 0;
-            select_m_axi_bvalid_reg <= 0;
+
+            select_s_axi_awaddr_reg     <= 0;
+            select_s_axi_awvalid_reg    <= 0;
+            select_m_axi_awready_reg    <= 0;
+            select_s_axi_awprot_reg     <= 0;
+            select_s_axi_wvalid_reg     <= 0;
+            select_m_axi_wready_reg     <= 0;
+            select_s_axi_wdata_reg      <= 0;
+            select_s_axi_wstrb_reg      <= 0;
+            select_s_axi_bready_reg     <= 0;
+            select_m_axi_bvalid_reg     <= 0;
         end
         else begin
             if (active_capture_reg) begin
@@ -153,16 +149,16 @@ module axi_lite_arbiter #(
             state_reg <= state_next;
             active_capture_reg <= active_capture_next;
 
-            select_s_axi_awaddr_reg <= select_s_axi_awaddr_next;
-            select_s_axi_awvalid_reg <= select_s_axi_awvalid_next;
-            select_m_axi_awready_reg <= select_m_axi_awready_next;
-            select_s_axi_awprot_reg  <= select_s_axi_awprot_next;
-            select_s_axi_wvalid_reg <= select_s_axi_wvalid_next;
-            select_m_axi_wready_reg <= select_m_axi_wready_next;
-            select_s_axi_wdata_reg <= select_s_axi_wdata_next;
-            select_s_axi_wstrb_reg <= select_s_axi_wstrb_next;
-            select_s_axi_bready_reg <= select_s_axi_bready_next;
-            select_m_axi_bvalid_reg <= select_m_axi_bvalid_next;
+            select_s_axi_awaddr_reg     <=      select_s_axi_awaddr_next;
+            select_s_axi_awvalid_reg    <=      select_s_axi_awvalid_next;
+            select_m_axi_awready_reg    <=      select_m_axi_awready_next;
+            select_s_axi_awprot_reg     <=      select_s_axi_awprot_next;
+            select_s_axi_wvalid_reg     <=      select_s_axi_wvalid_next;
+            select_m_axi_wready_reg     <=      select_m_axi_wready_next;
+            select_s_axi_wdata_reg      <=      select_s_axi_wdata_next;
+            select_s_axi_wstrb_reg      <=      select_s_axi_wstrb_next;
+            select_s_axi_bready_reg     <=      select_s_axi_bready_next;
+            select_m_axi_bvalid_reg     <=      select_m_axi_bvalid_next;
         end
         
     end
@@ -170,154 +166,192 @@ module axi_lite_arbiter #(
 
     //combi circuit
     always @(*) begin
-        active_capture_next = 0;
-        state_next = state_reg;
+        active_capture_next         =   active_capture_reg;
+        state_next                  =   state_reg;
 
-        select_s_axi_awaddr_next = select_s_axi_awaddr_reg;
-        select_s_axi_awvalid_next = select_s_axi_awvalid_reg;
-        select_m_axi_awready_next = select_m_axi_awready_reg;
-        select_s_axi_awprot_next  = select_s_axi_awprot_reg;
-        select_s_axi_wvalid_next = select_s_axi_wvalid_reg;
-        select_m_axi_wready_next = select_m_axi_wready_reg;
-        select_s_axi_wdata_next = select_s_axi_wdata_reg;
-        select_s_axi_wstrb_next = select_s_axi_wstrb_reg;
-        select_s_axi_bready_next = select_s_axi_bready_reg;
-        select_m_axi_bvalid_next = select_m_axi_bvalid_reg;
+        select_s_axi_awaddr_next    =   select_s_axi_awaddr_reg;
+        select_s_axi_awvalid_next   =   select_s_axi_awvalid_reg;
+        select_m_axi_awready_next   =   select_m_axi_awready_reg;
+        select_s_axi_awprot_next    =   select_s_axi_awprot_reg;
+        select_s_axi_wvalid_next    =   select_s_axi_wvalid_reg;
+        select_m_axi_wready_next    =   select_m_axi_wready_reg;
+        select_s_axi_wdata_next     =   select_s_axi_wdata_reg;
+        select_s_axi_wstrb_next     =   select_s_axi_wstrb_reg;
+        select_s_axi_bready_next    =   select_s_axi_bready_reg;
+        select_m_axi_bvalid_next    =   select_m_axi_bvalid_reg;
         case (state_reg)
             START: begin
+                select_s_axi_awaddr_next    =   0;
+                select_s_axi_awvalid_next   =   0;
+                select_m_axi_awready_next   =   0;
+                select_s_axi_awprot_next    =   0;
+                select_s_axi_wvalid_next    =   0;
+                select_m_axi_wready_next    =   0;
+                select_s_axi_wdata_next     =   0;
+                select_s_axi_wstrb_next     =   0;
+                select_s_axi_bready_next    =   0;
+                select_m_axi_bvalid_next    =   0;
+
                 if (|i_m_axi_awvalid == 1) begin
                     active_capture_next = 1;
-                    state_next = DECODE;   
+                    case (capture_awvalid_reg)
+                        'b001: begin
+                            state_next = S1_0;
+                            active_capture_next = 0;   
+                        end 
+                        'b010: begin
+                            state_next = S2_1;
+                            active_capture_next = 0;   
+                        end 
+                        'b011: begin
+                            state_next = S3_0;
+                            active_capture_next = 0;   
+                        end 
+                        'b100: begin
+                            state_next = S4_2;
+                            active_capture_next = 0;   
+                        end 
+                        'b101: begin
+                            state_next = S5_0;
+                            active_capture_next = 0;   
+                        end 
+                        'b110: begin
+                            state_next = S6_1;
+                            active_capture_next = 0;   
+                        end 
+                        'b111: begin
+                            state_next = S7_0;
+                            active_capture_next = 0;   
+                        end
+
+                        default: begin
+                            state_next = START;
+                        end 
+                        
+                    endcase
+                       
                 end  
             end 
-            DECODE: begin
-                active_capture_next = 0;
-                case (capture_awvalid_reg)
-                    'b001: begin
-                        state_next = S1_0;   
-                    end 
-                    'b010: begin
-                        state_next = S2_1;   
-                    end 
-                    'b011: begin
-                        state_next = S3_0;   
-                    end 
-                    'b100: begin
-                        state_next = S4_2;   
-                    end 
-                    'b101: begin
-                        state_next = S5_0;   
-                    end 
-                    'b110: begin
-                        state_next = S6_1;   
-                    end 
-                    'b111: begin
-                        state_next = S7_0;   
-                    end
-
-                    default: state_next = START;
-                endcase
-
-            end
             S1_0, S3_0, S5_0, S7_0: begin
-                select_s_axi_awaddr_next = i_m_axi_awaddr[0];
-                select_s_axi_awvalid_next = i_m_axi_awvalid[0];
-                select_m_axi_awready_next = {'b0, 'b0, i_s_axi_awready};
+                capture_awvalid_reg         =   0;
+                select_s_axi_awaddr_next    =   i_m_axi_awaddr[0];
+                select_s_axi_awvalid_next   =   i_m_axi_awvalid[0];
+                select_m_axi_awready_next   =   {1'b0, 1'b0, i_s_axi_awready};
+                
+                select_s_axi_awprot_next    =   i_m_axi_awprot[0];
+                select_s_axi_wvalid_next    =   i_m_axi_wvalid[0];
+                select_m_axi_wready_next    =   {1'b0, 1'b0, i_s_axi_wready};
+                select_s_axi_wdata_next     =   i_m_axi_wdata[0];
+                select_s_axi_wstrb_next     =   i_m_axi_wstrb[0];
 
-                select_s_axi_awprot_next = i_m_axi_awprot[0];
-                select_s_axi_wvalid_next = i_m_axi_wvalid[0];
-                select_m_axi_wready_next = {'b0, 'b0, i_s_axi_wready};
-                select_s_axi_wdata_next = i_m_axi_wdata[0];
-                select_s_axi_wstrb_next = i_m_axi_wstrb[0];
-
-                select_m_axi_bvalid_next = {'b0, 'b0, i_s_axi_bvalid};
-                select_s_axi_bready_next = i_m_axi_bready[0];
+                select_m_axi_bvalid_next    =   {1'b0, 1'b0, i_s_axi_bvalid};
+                select_s_axi_bready_next    =   i_m_axi_bready[0];
 
                 //branch
-                if (state_reg == S1_0) begin
-                    if (select_m_axi_bvalid_reg[0] == select_s_axi_bready_reg)
+                case (state_reg)
+                    S1_0: begin
+                        if ((select_m_axi_bvalid_reg[0] == 1) && (i_m_axi_bready[0] == 1))
                         state_next = START;
-                end
-                if (state_reg == S3_0) begin
-                    if (select_m_axi_bvalid_reg[0] == select_s_axi_bready_reg)
+                    end
+                    S3_0: begin
+                        if ((select_m_axi_bvalid_reg[0] == 1) && (i_m_axi_bready[0] == 1))
                         state_next = S3_1;
-                end
-                if (state_reg == S5_0) begin
-                    if (select_m_axi_bvalid_reg[0] == select_s_axi_bready_reg)
+                    end
+                    S5_0: begin
+                        if ((select_m_axi_bvalid_reg[0] == 1) && (i_m_axi_bready[0] == 1))
                         state_next = S5_2;
-                end
-                if (state_reg == S7_0) begin
-                    if (select_m_axi_bvalid_reg[0] == select_s_axi_bready_reg)
+                    end
+                    S7_0: begin
+                        if ((select_m_axi_bvalid_reg[0] == 1) && (i_m_axi_bready[0] == 1))
                         state_next = S7_1;
-                end
+                    end 
+
+                    default: begin
+                      
+                    end
+                endcase
             end
 
             S2_1, S3_1, S6_1, S7_1: begin
-                select_s_axi_awaddr_next = i_m_axi_awaddr[1];
-                select_s_axi_awvalid_next = i_m_axi_awvalid[1];
-                select_m_axi_awready_next = {'b0, i_s_axi_awready, 'b0};
+                capture_awvalid_reg         =   0;
+                select_s_axi_awaddr_next    =   i_m_axi_awaddr[1];
+                select_s_axi_awvalid_next   =   i_m_axi_awvalid[1];
+                select_m_axi_awready_next   =   {1'b0, i_s_axi_awready, 1'b0};
 
-                select_s_axi_awprot_next = i_m_axi_awprot[1];
-                select_s_axi_wvalid_next = i_m_axi_wvalid[1];
-                select_m_axi_wready_next = {'b0, i_s_axi_wready, 'b0};
-                select_s_axi_wdata_next = i_m_axi_wdata[1];
-                select_s_axi_wstrb_next = i_m_axi_wstrb[1];
+                select_s_axi_awprot_next    =   i_m_axi_awprot[1];
+                select_s_axi_wvalid_next    =   i_m_axi_wvalid[1];
+                select_m_axi_wready_next    =   {1'b0, i_s_axi_wready, 1'b0};
+                select_s_axi_wdata_next     =   i_m_axi_wdata[1];
+                select_s_axi_wstrb_next     =   i_m_axi_wstrb[1];
 
-                select_m_axi_bvalid_next = {'b0, i_s_axi_bvalid, 'b0};
-                select_s_axi_bready_next = i_m_axi_bready[1];
+                select_m_axi_bvalid_next    =   {1'b0, i_s_axi_bvalid, 1'b0};
+                select_s_axi_bready_next    =   i_m_axi_bready[1];
 
                 //branch
-                if (state_reg == S2_1) begin
-                    if (select_m_axi_bvalid_reg[1] == select_s_axi_bready_reg)
+                case (state_reg)
+                    S2_1: begin
+                        if ((select_m_axi_bvalid_reg[1] == 1) && (i_m_axi_bready[1] == 1))
                         state_next = START;
-                end
-                if (state_reg == S3_1) begin
-                    if (select_m_axi_bvalid_reg[1] == select_s_axi_bready_reg)
+                    end
+                    S3_1: begin
+                        if ((select_m_axi_bvalid_reg[1] == 1) && (i_m_axi_bready[1] == 1))
                         state_next = START;
-                end
-                if (state_reg == S6_1) begin
-                    if (select_m_axi_bvalid_reg[1] == select_s_axi_bready_reg)
+                    end
+                    S6_1: begin
+                        if ((select_m_axi_bvalid_reg[1] == 1) && (i_m_axi_bready[1] == 1))
                         state_next = S6_2;
-                end
-                if (state_reg == S7_1) begin
-                    if (select_m_axi_bvalid_reg[1] == select_s_axi_bready_reg)
+                    end
+                    S7_1: begin
+                        if ((select_m_axi_bvalid_reg[1] == 1) && (i_m_axi_bready[1] == 1))
                         state_next = S7_2;
-                end
+                    end 
+
+                    default: begin
+                      
+                    end
+                endcase
                 
             end
 
             S4_2, S5_2, S6_2, S7_2: begin
-                select_s_axi_awaddr_next = i_m_axi_awaddr[2];
-                select_s_axi_awvalid_next = i_m_axi_awvalid[2];
-                select_m_axi_awready_next = {i_s_axi_awready, 'b0, 'b0};
+                capture_awvalid_reg         =   0;
+                select_s_axi_awaddr_next    =   i_m_axi_awaddr[2];
+                select_s_axi_awvalid_next   =   i_m_axi_awvalid[2];
+                select_m_axi_awready_next   =   {i_s_axi_awready, 1'b0, 1'b0};
 
-                select_s_axi_awprot_next = i_m_axi_awprot[2];
-                select_s_axi_wvalid_next = i_m_axi_wvalid[2];
-                select_m_axi_wready_next = {i_s_axi_wready, 'b0, 'b0};
-                select_s_axi_wdata_next = i_m_axi_wdata[2];
-                select_s_axi_wstrb_next = i_m_axi_wstrb[2];
+                select_s_axi_awprot_next    =   i_m_axi_awprot[2];
+                select_s_axi_wvalid_next    =   i_m_axi_wvalid[2];
+                select_m_axi_wready_next    =   {i_s_axi_wready, 1'b0, 1'b0};
+                select_s_axi_wdata_next     =   i_m_axi_wdata[2];
+                select_s_axi_wstrb_next     =   i_m_axi_wstrb[2];
                 
-                select_m_axi_bvalid_next = {i_s_axi_bvalid, 'b0, 'b0};
-                select_s_axi_bready_next = i_m_axi_bready[2];
+                select_m_axi_bvalid_next    =   {i_s_axi_bvalid, 1'b0, 1'b0};
+                select_s_axi_bready_next    =   i_m_axi_bready[2];
 
                 //branch
+                case (state_reg)
+                    S4_2: begin
+                        if ((select_m_axi_bvalid_reg[2] == 1) && (i_m_axi_bready[2] == 1))
+                        state_next = START;
+                    end
+                    S5_2: begin
+                        if ((select_m_axi_bvalid_reg[2] == 1) && (i_m_axi_bready[2] == 1))
+                        state_next = START;
+                    end
+                    S6_2: begin
+                        if ((select_m_axi_bvalid_reg[2] == 1) && (i_m_axi_bready[2] == 1))
+                        state_next = START;
+                    end
+                    S7_2: begin
+                        if ((select_m_axi_bvalid_reg[2] == 1) && (i_m_axi_bready[2] == 1))
+                        state_next = START;
+                    end 
+
+                    default: begin
+                      
+                    end
+                endcase
                 
-                if (state_reg == S4_2) begin
-                    if (select_m_axi_bvalid_reg[2] == select_s_axi_bready_reg)
-                        state_next = START;
-                end
-                if (state_reg == S5_2) begin
-                    if (select_m_axi_bvalid_reg[2] == select_s_axi_bready_reg)
-                        state_next = START;
-                end
-                if (state_reg == S6_2) begin
-                    if (select_m_axi_bvalid_reg[2] == select_s_axi_bready_reg)
-                        state_next = START;
-                end
-                if (state_reg == S7_2) begin
-                    if (select_m_axi_bvalid_reg[2] == select_s_axi_bready_reg)
-                        state_next = START;
-                end
             end
 
             default: begin
@@ -328,58 +362,155 @@ module axi_lite_arbiter #(
     end
 
     //write Adress
-    // assign  o_s_axi_awaddr      =   (state_reg == S1_0 || state_reg == S3_0 || state_reg == S5_0 || state_reg == S7_0)  ? i_m_axi_awaddr[0] :
-    //                                 (state_reg == S2_1 || state_reg == S3_1 || state_reg == S6_1 || state_reg == S7_1)  ? i_m_axi_awaddr[1] : 
-    //                                 (state_reg == S4_2 || state_reg == S5_2 || state_reg == S6_2 || state_reg == S7_2)  ? i_m_axi_awaddr[2] : 0;
     assign  o_s_axi_awaddr      =   select_s_axi_awaddr_reg;
-
-    // assign  o_s_axi_awvalid     =   (state_reg == S1_0 || state_reg == S3_0 || state_reg == S5_0 || state_reg == S7_0)  ? i_m_axi_awvalid[0] :
-    //                                 (state_reg == S2_1 || state_reg == S3_1 || state_reg == S6_1 || state_reg == S7_1)  ? i_m_axi_awvalid[1] : 
-    //                                 (state_reg == S4_2 || state_reg == S5_2 || state_reg == S6_2 || state_reg == S7_2)  ? i_m_axi_awvalid[2] : 0;
-    assign  o_s_axi_awvalid     =   select_s_axi_awvalid_reg;
-
-    // assign  o_m_axi_awready[0]  =   (state_reg == S1_0 || state_reg == S3_0 || state_reg == S5_0 || state_reg == S7_0)  ? i_s_axi_awready : 0;
-    // assign  o_m_axi_awready[1]  =   (state_reg == S2_1 || state_reg == S3_1 || state_reg == S6_1 || state_reg == S7_1)  ? i_s_axi_awready : 0;
-    // assign  o_m_axi_awready[2]  =   (state_reg == S4_2 || state_reg == S5_2 || state_reg == S6_2 || state_reg == S7_2)  ? i_s_axi_awready : 0;
+    assign  o_s_axi_awvalid     =   (enb_awvalid) ? 0 : select_s_axi_awvalid_reg;
     assign  o_m_axi_awready     =   select_m_axi_awready_reg;
-    // assign  o_m_axi_awready[0]  =   select_m_axi_awready_reg[0];
-    // assign  o_m_axi_awready[1]  =   select_m_axi_awready_reg[1];
-    // assign  o_m_axi_awready[2]  =   select_m_axi_awready_reg[2];
 
     //write Protection, Data, Strobe
-    // assign  o_s_axi_awprot      =   (state_reg == S1_0 || state_reg == S3_0 || state_reg == S5_0 || state_reg == S7_0)  ? i_m_axi_awprot[0] :
-    //                                 (state_reg == S2_1 || state_reg == S3_1 || state_reg == S6_1 || state_reg == S7_1)  ? i_m_axi_awprot[1] : 
-    //                                 (state_reg == S4_2 || state_reg == S5_2 || state_reg == S6_2 || state_reg == S7_2)  ? i_m_axi_awprot[2] : 0;
     assign  o_s_axi_awprot      =   select_s_axi_awprot_reg;
-
-    // assign  o_s_axi_wvalid      =   (state_reg == S1_0 || state_reg == S3_0 || state_reg == S5_0 || state_reg == S7_0)  ? i_m_axi_wvalid[0] :
-    //                                 (state_reg == S2_1 || state_reg == S3_1 || state_reg == S6_1 || state_reg == S7_1)  ? i_m_axi_wvalid[1] : 
-    //                                 (state_reg == S4_2 || state_reg == S5_2 || state_reg == S6_2 || state_reg == S7_2)  ? i_m_axi_wvalid[2] : 0;
-    assign  o_s_axi_wvalid      =   select_s_axi_wvalid_reg;
-
-    // assign  o_m_axi_wready[0]   =   (state_reg == S1_0 || state_reg == S3_0 || state_reg == S5_0 || state_reg == S7_0)  ? i_s_axi_wready : 0;
-    // assign  o_m_axi_wready[1]   =   (state_reg == S2_1 || state_reg == S3_1 || state_reg == S6_1 || state_reg == S7_1)  ? i_s_axi_wready : 0;
-    // assign  o_m_axi_wready[2]   =   (state_reg == S4_2 || state_reg == S5_2 || state_reg == S6_2 || state_reg == S7_2)  ? i_s_axi_wready : 0;
-    assign  o_m_axi_wready      =  select_m_axi_wready_reg; 
-
-    // assign  o_s_axi_wdata       =   (state_reg == S1_0 || state_reg == S3_0 || state_reg == S5_0 || state_reg == S7_0)  ? i_m_axi_wdata[0] :
-    //                                 (state_reg == S2_1 || state_reg == S3_1 || state_reg == S6_1 || state_reg == S7_1)  ? i_m_axi_wdata[1] : 
-    //                                 (state_reg == S4_2 || state_reg == S5_2 || state_reg == S6_2 || state_reg == S7_2)  ? i_m_axi_wdata[2] : 0;
-    assign  o_s_axi_wdata       = select_s_axi_wdata_reg;
-
-    // assign  o_s_axi_wstrb       =   (state_reg == S1_0 || state_reg == S3_0 || state_reg == S5_0 || state_reg == S7_0)  ? i_m_axi_wstrb[0] :
-    //                                 (state_reg == S2_1 || state_reg == S3_1 || state_reg == S6_1 || state_reg == S7_1)  ? i_m_axi_wstrb[1] : 
-    //                                 (state_reg == S4_2 || state_reg == S5_2 || state_reg == S6_2 || state_reg == S7_2)  ? i_m_axi_wstrb[2] : 0;
-    assign  o_s_axi_wstrb       = select_s_axi_wstrb_reg;
+    assign  o_s_axi_wvalid      =   (enb_wvalid) ? 0 : select_s_axi_wvalid_reg;
+    assign  o_m_axi_wready      =   select_m_axi_wready_reg; 
+    assign  o_s_axi_wdata       =   select_s_axi_wdata_reg;
+    assign  o_s_axi_wstrb       =   select_s_axi_wstrb_reg;
 
     // write Response
-    // assign  o_m_axi_bvalid[0]   =   (state_reg == S1_0 || state_reg == S3_0 || state_reg == S5_0 || state_reg == S7_0)  ? i_s_axi_bvalid : 0;
-    // assign  o_m_axi_bvalid[1]   =   (state_reg == S2_1 || state_reg == S3_1 || state_reg == S6_1 || state_reg == S7_1)  ? i_s_axi_bvalid : 0;
-    // assign  o_m_axi_bvalid[2]   =   (state_reg == S4_2 || state_reg == S5_2 || state_reg == S6_2 || state_reg == S7_2)  ? i_s_axi_bvalid : 0;
-    assign  o_m_axi_bvalid      = select_m_axi_bvalid_reg;
+    assign  o_m_axi_bvalid      =   select_m_axi_bvalid_reg;
+    assign  o_s_axi_bready      =   (enb_bready) ? 0 : select_s_axi_bready_reg;
+
+
+
     
-    // assign  o_s_axi_bready      =   (state_reg == S1_0 || state_reg == S3_0 || state_reg == S5_0 || state_reg == S7_0)  ? i_m_axi_bready[0] :
-    //                                 (state_reg == S2_1 || state_reg == S3_1 || state_reg == S6_1 || state_reg == S7_1)  ? i_m_axi_bready[1] : 
-    //                                 (state_reg == S4_2 || state_reg == S5_2 || state_reg == S6_2 || state_reg == S7_2)  ? i_m_axi_bready[2] : 0;
-    assign  o_s_axi_bready      = select_s_axi_bready_reg;
+    timer_write_channel timer_write(
+        .clk(clk),
+        .resetn(resetn),
+
+        .s_awready(i_s_axi_awready),
+        .s_wready(i_s_axi_wready),
+        .s_bvalid(i_s_axi_bvalid),
+
+        .enb_awvalid(enb_awvalid),
+        .enb_wvalid(enb_wvalid),
+        .enb_bready(enb_bready)
+    );
+
+endmodule
+
+
+module timer_write_channel(
+    input clk,
+    input resetn,
+    
+    input s_awready,
+    input s_wready,
+    input s_bvalid,
+
+    output enb_awvalid,
+    output enb_wvalid,
+    output enb_bready
+);
+
+
+    reg [2:0]count0_reg, count0_next;
+    reg [2:0]count1_reg, count1_next;
+    reg [2:0]count2_reg, count2_next;
+
+    reg flag_awvalid_reg, flag_awvalid_next;
+    reg flag_wvalid_reg, flag_wvalid_next;
+    reg flag_bready_reg, flag_bready_next;
+
+    reg enb_awvalid_reg, enb_awvalid_next;
+    reg enb_wvalid_reg, enb_wvalid_next;
+    reg enb_bready_reg, enb_bready_next;
+
+    always @(posedge clk, negedge resetn) begin
+        if(~resetn) begin
+            count0_reg <= 0;
+            count1_reg <= 0;
+            count2_reg <= 0;
+            flag_awvalid_reg <= 0;
+            flag_wvalid_reg <= 0;
+            flag_bready_reg <= 0;
+
+            enb_awvalid_reg <= 0;
+            enb_wvalid_reg  <= 0;
+            enb_bready_reg  <= 0;
+        end
+        else begin
+            count0_reg <= count0_next;
+            count1_reg <= count1_next;
+            count2_reg <= count2_next;
+            flag_awvalid_reg <= flag_awvalid_next;
+            flag_wvalid_reg <= flag_wvalid_next;
+            flag_bready_reg <= flag_bready_next; 
+
+            enb_awvalid_reg <= enb_awvalid_next;
+            enb_wvalid_reg  <= enb_wvalid_next;
+            enb_bready_reg  <= enb_bready_next;
+        end
+        
+    end
+
+    always @(*) begin
+        count0_next = count0_reg;
+        count1_next = count1_reg;
+        count2_next = count2_reg;
+
+        flag_awvalid_next = flag_awvalid_reg;
+        flag_wvalid_next = flag_wvalid_reg;
+        flag_bready_next = flag_bready_reg;
+
+        enb_awvalid_next = enb_awvalid_reg;
+        enb_wvalid_next  = enb_wvalid_reg;
+        enb_bready_next  = enb_bready_reg;
+
+        case ({s_bvalid, s_wready, s_awready})
+            'b001: begin: signal_awready
+                flag_awvalid_next = 1;
+            
+            end
+            'b010: begin: signal_wready
+                flag_wvalid_next = 1;
+            end
+            'b100: begin: signal_bvalid
+                flag_bready_next = 1;
+            end
+            default: begin
+            end
+        endcase
+
+        if (flag_awvalid_next == 1) begin
+            count0_next = count0_next + 1;
+            enb_awvalid_next = 1;
+            if (count0_reg > 1) begin
+                flag_awvalid_next = 0;
+                count0_next = 0;
+                enb_awvalid_next = 0;
+            end
+        end
+        if (flag_wvalid_next == 1) begin
+            count1_next = count1_next + 1;
+            enb_wvalid_next = 1;
+            if (count1_reg > 1) begin
+                flag_wvalid_next = 0;
+                count1_next = 0;
+                enb_wvalid_next = 0;
+            end
+        end
+        if (flag_bready_next == 1) begin
+            count2_next = count2_next + 1;
+            enb_bready_next = 1;
+            if (count2_reg > 1) begin
+                flag_bready_next = 0;
+                count2_next = 0;
+                enb_bready_next = 0;
+            end
+        end
+
+    end
+
+    assign enb_awvalid = enb_awvalid_reg;
+    assign enb_wvalid = enb_wvalid_reg;
+    assign enb_bready = enb_bready_reg;
+
+
 endmodule

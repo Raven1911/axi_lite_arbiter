@@ -100,8 +100,8 @@ module axi_lite_arbiter #(
 
 
     //variable
-    reg     [3:0]              state_reg, state_next;
-    reg     [NUM_MASTERS-1:0]   capture_awvalid_reg;
+    reg     [3:0]               state_reg, state_next;
+    reg     [NUM_MASTERS-1:0]   capture_awvalid_reg, capture_awvalid_next;
 
 
     reg                         active_capture_reg, active_capture_next;
@@ -121,9 +121,9 @@ module axi_lite_arbiter #(
     reg     [NUM_MASTERS-1:0]   select_m_axi_bvalid_reg, select_m_axi_bvalid_next; 
 
 
-    wire enb_awvalid, enb_wvalid, enb_bready;
+    wire enb_awvalid, enb_wvalid, enb_bready, enb_quantum_time;
 
-    //sequential circuit
+    //wirte channel sequential circuit
     always @(posedge clk or negedge resetn) begin
         if (~resetn) begin
             state_reg                   <= START;
@@ -143,11 +143,9 @@ module axi_lite_arbiter #(
             select_m_axi_bvalid_reg     <= 0;
         end
         else begin
-            if (active_capture_reg) begin
-                capture_awvalid_reg <= i_m_axi_awvalid;
-            end
             state_reg <= state_next;
             active_capture_reg <= active_capture_next;
+            capture_awvalid_reg <= capture_awvalid_next;
 
             select_s_axi_awaddr_reg     <=      select_s_axi_awaddr_next;
             select_s_axi_awvalid_reg    <=      select_s_axi_awvalid_next;
@@ -164,9 +162,10 @@ module axi_lite_arbiter #(
     end
 
 
-    //combi circuit
+    //wirte channel combi circuit
     always @(*) begin
         active_capture_next         =   active_capture_reg;
+        capture_awvalid_next        =   select_s_axi_awvalid_reg;
         state_next                  =   state_reg;
 
         select_s_axi_awaddr_next    =   select_s_axi_awaddr_reg;
@@ -191,6 +190,11 @@ module axi_lite_arbiter #(
                 select_s_axi_wstrb_next     =   0;
                 select_s_axi_bready_next    =   0;
                 select_m_axi_bvalid_next    =   0;
+
+                if (active_capture_reg) begin
+                    capture_awvalid_next = i_m_axi_awvalid; //;
+                end
+                else capture_awvalid_next = 0;
 
                 if (|i_m_axi_awvalid == 1) begin
                     active_capture_next = 1;
@@ -233,7 +237,7 @@ module axi_lite_arbiter #(
                 end  
             end 
             S1_0, S3_0, S5_0, S7_0: begin
-                capture_awvalid_reg         =   0;
+                capture_awvalid_next         =   0;
                 select_s_axi_awaddr_next    =   i_m_axi_awaddr[0];
                 select_s_axi_awvalid_next   =   i_m_axi_awvalid[0];
                 select_m_axi_awready_next   =   {1'b0, 1'b0, i_s_axi_awready};
@@ -250,19 +254,19 @@ module axi_lite_arbiter #(
                 //branch
                 case (state_reg)
                     S1_0: begin
-                        if ((select_m_axi_bvalid_reg[0] == 1) && (i_m_axi_bready[0] == 1))
+                        if (((select_m_axi_bvalid_reg[0] == 1) && (i_m_axi_bready[0] == 1)) || (enb_quantum_time == 1))
                         state_next = START;
                     end
                     S3_0: begin
-                        if ((select_m_axi_bvalid_reg[0] == 1) && (i_m_axi_bready[0] == 1))
+                        if (((select_m_axi_bvalid_reg[0] == 1) && (i_m_axi_bready[0] == 1)) || (enb_quantum_time == 1))
                         state_next = S3_1;
                     end
                     S5_0: begin
-                        if ((select_m_axi_bvalid_reg[0] == 1) && (i_m_axi_bready[0] == 1))
+                        if (((select_m_axi_bvalid_reg[0] == 1) && (i_m_axi_bready[0] == 1)) || (enb_quantum_time == 1))
                         state_next = S5_2;
                     end
                     S7_0: begin
-                        if ((select_m_axi_bvalid_reg[0] == 1) && (i_m_axi_bready[0] == 1))
+                        if (((select_m_axi_bvalid_reg[0] == 1) && (i_m_axi_bready[0] == 1)) || (enb_quantum_time == 1))
                         state_next = S7_1;
                     end 
 
@@ -273,7 +277,7 @@ module axi_lite_arbiter #(
             end
 
             S2_1, S3_1, S6_1, S7_1: begin
-                capture_awvalid_reg         =   0;
+                capture_awvalid_next         =   0;
                 select_s_axi_awaddr_next    =   i_m_axi_awaddr[1];
                 select_s_axi_awvalid_next   =   i_m_axi_awvalid[1];
                 select_m_axi_awready_next   =   {1'b0, i_s_axi_awready, 1'b0};
@@ -290,19 +294,19 @@ module axi_lite_arbiter #(
                 //branch
                 case (state_reg)
                     S2_1: begin
-                        if ((select_m_axi_bvalid_reg[1] == 1) && (i_m_axi_bready[1] == 1))
+                        if (((select_m_axi_bvalid_reg[1] == 1) && (i_m_axi_bready[1] == 1)) || (enb_quantum_time == 1))
                         state_next = START;
                     end
                     S3_1: begin
-                        if ((select_m_axi_bvalid_reg[1] == 1) && (i_m_axi_bready[1] == 1))
+                        if (((select_m_axi_bvalid_reg[1] == 1) && (i_m_axi_bready[1] == 1)) || (enb_quantum_time == 1))
                         state_next = START;
                     end
                     S6_1: begin
-                        if ((select_m_axi_bvalid_reg[1] == 1) && (i_m_axi_bready[1] == 1))
+                        if (((select_m_axi_bvalid_reg[1] == 1) && (i_m_axi_bready[1] == 1)) || (enb_quantum_time == 1))
                         state_next = S6_2;
                     end
                     S7_1: begin
-                        if ((select_m_axi_bvalid_reg[1] == 1) && (i_m_axi_bready[1] == 1))
+                        if (((select_m_axi_bvalid_reg[1] == 1) && (i_m_axi_bready[1] == 1)) || (enb_quantum_time == 1))
                         state_next = S7_2;
                     end 
 
@@ -314,7 +318,7 @@ module axi_lite_arbiter #(
             end
 
             S4_2, S5_2, S6_2, S7_2: begin
-                capture_awvalid_reg         =   0;
+                capture_awvalid_next         =   0;
                 select_s_axi_awaddr_next    =   i_m_axi_awaddr[2];
                 select_s_axi_awvalid_next   =   i_m_axi_awvalid[2];
                 select_m_axi_awready_next   =   {i_s_axi_awready, 1'b0, 1'b0};
@@ -331,19 +335,19 @@ module axi_lite_arbiter #(
                 //branch
                 case (state_reg)
                     S4_2: begin
-                        if ((select_m_axi_bvalid_reg[2] == 1) && (i_m_axi_bready[2] == 1))
+                        if (((select_m_axi_bvalid_reg[2] == 1) && (i_m_axi_bready[2] == 1)) || (enb_quantum_time == 1))
                         state_next = START;
                     end
                     S5_2: begin
-                        if ((select_m_axi_bvalid_reg[2] == 1) && (i_m_axi_bready[2] == 1))
+                        if (((select_m_axi_bvalid_reg[2] == 1) && (i_m_axi_bready[2] == 1)) || (enb_quantum_time == 1))
                         state_next = START;
                     end
                     S6_2: begin
-                        if ((select_m_axi_bvalid_reg[2] == 1) && (i_m_axi_bready[2] == 1))
+                        if (((select_m_axi_bvalid_reg[2] == 1) && (i_m_axi_bready[2] == 1)) || (enb_quantum_time == 1))
                         state_next = START;
                     end
                     S7_2: begin
-                        if ((select_m_axi_bvalid_reg[2] == 1) && (i_m_axi_bready[2] == 1))
+                        if (((select_m_axi_bvalid_reg[2] == 1) && (i_m_axi_bready[2] == 1)) || (enb_quantum_time == 1))
                         state_next = START;
                     end 
 
@@ -387,32 +391,44 @@ module axi_lite_arbiter #(
         .s_awready(i_s_axi_awready),
         .s_wready(i_s_axi_wready),
         .s_bvalid(i_s_axi_bvalid),
+        .s_start_quantum(o_s_axi_awvalid),
 
         .enb_awvalid(enb_awvalid),
         .enb_wvalid(enb_wvalid),
-        .enb_bready(enb_bready)
+        .enb_bready(enb_bready),
+        .enb_quantum_time(enb_quantum_time)
     );
 
 endmodule
 
-
+// module child
 module timer_write_channel(
     input clk,
     input resetn,
-    
+
     input s_awready,
     input s_wready,
     input s_bvalid,
+    input s_start_quantum,
 
     output enb_awvalid,
     output enb_wvalid,
-    output enb_bready
+    output enb_bready,
+    output enb_quantum_time
 );
 
+
+    localparam IDLE = 'b00,
+               START = 'b01;
+
+    localparam QUANTUM_SIZE = 14; // clock
+
+    reg [1:0] state_quantum_reg, state_quantum_next;
 
     reg [2:0]count0_reg, count0_next;
     reg [2:0]count1_reg, count1_next;
     reg [2:0]count2_reg, count2_next;
+    reg [3:0]count_quantum_reg, count_quantum_next;
 
     reg flag_awvalid_reg, flag_awvalid_next;
     reg flag_wvalid_reg, flag_wvalid_next;
@@ -421,12 +437,16 @@ module timer_write_channel(
     reg enb_awvalid_reg, enb_awvalid_next;
     reg enb_wvalid_reg, enb_wvalid_next;
     reg enb_bready_reg, enb_bready_next;
+    reg enb_quantum_time_reg, enb_quantum_time_next;
 
     always @(posedge clk, negedge resetn) begin
         if(~resetn) begin
+            state_quantum_reg <= IDLE;
             count0_reg <= 0;
             count1_reg <= 0;
             count2_reg <= 0;
+            count_quantum_reg <= 0;
+            
             flag_awvalid_reg <= 0;
             flag_wvalid_reg <= 0;
             flag_bready_reg <= 0;
@@ -434,26 +454,34 @@ module timer_write_channel(
             enb_awvalid_reg <= 0;
             enb_wvalid_reg  <= 0;
             enb_bready_reg  <= 0;
+            enb_quantum_time_reg <= 0;
         end
         else begin
+            state_quantum_reg <= state_quantum_next;
+
             count0_reg <= count0_next;
             count1_reg <= count1_next;
             count2_reg <= count2_next;
+            count_quantum_reg <= count_quantum_next;
+
             flag_awvalid_reg <= flag_awvalid_next;
             flag_wvalid_reg <= flag_wvalid_next;
-            flag_bready_reg <= flag_bready_next; 
+            flag_bready_reg <= flag_bready_next;
 
             enb_awvalid_reg <= enb_awvalid_next;
             enb_wvalid_reg  <= enb_wvalid_next;
             enb_bready_reg  <= enb_bready_next;
+            enb_quantum_time_reg <= enb_quantum_time_next;
         end
         
     end
 
     always @(*) begin
+        state_quantum_next = state_quantum_reg;
         count0_next = count0_reg;
         count1_next = count1_reg;
         count2_next = count2_reg;
+        count_quantum_next = count_quantum_reg;
 
         flag_awvalid_next = flag_awvalid_reg;
         flag_wvalid_next = flag_wvalid_reg;
@@ -462,7 +490,9 @@ module timer_write_channel(
         enb_awvalid_next = enb_awvalid_reg;
         enb_wvalid_next  = enb_wvalid_reg;
         enb_bready_next  = enb_bready_reg;
+        enb_quantum_time_next = enb_quantum_time_reg;
 
+        // branch signal transaction
         case ({s_bvalid, s_wready, s_awready})
             'b001: begin: signal_awready
                 flag_awvalid_next = 1;
@@ -506,11 +536,37 @@ module timer_write_channel(
             end
         end
 
+        //time quantum process
+        case (state_quantum_reg)
+            IDLE: begin
+                enb_quantum_time_next = 0;
+                if (s_start_quantum == 1) begin
+                    state_quantum_next = START;
+                    count_quantum_next = count_quantum_next + 1;
+                end
+            end
+            START: begin
+                count_quantum_next = count_quantum_next + 1;
+                if ((count_quantum_reg > QUANTUM_SIZE)) begin
+                    count_quantum_next = 0;
+                    enb_quantum_time_next = 1;
+                    state_quantum_next = IDLE;
+                end
+                if (enb_bready_reg) begin
+                    count_quantum_next = 0;
+                    enb_quantum_time_next = 0;
+                    state_quantum_next = IDLE;
+                end      
+            end 
+            default: state_quantum_next = IDLE;
+        endcase
+        
+
     end
 
     assign enb_awvalid = enb_awvalid_reg;
     assign enb_wvalid = enb_wvalid_reg;
     assign enb_bready = enb_bready_reg;
-
+    assign enb_quantum_time = enb_quantum_time_reg;
 
 endmodule

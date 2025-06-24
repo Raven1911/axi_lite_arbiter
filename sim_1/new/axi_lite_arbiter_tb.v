@@ -179,6 +179,13 @@ module axi_lite_arbiter_tb;
         m_axi_awvalid = 'b111;
         m_axi_wvalid  = 'b111;
         m_axi_bready  = 'b111;
+        m_axi_awprot_0 = 'b001; 
+        m_axi_awprot_1 = 'b011; 
+        m_axi_awprot_2 = 'b100;
+
+        m_axi_wstrb_0 = 'b1111; 
+        m_axi_wstrb_1 = 'b1101;
+        m_axi_wstrb_2 = 'b1011;
 
         //master 0
         repeat(7) @(posedge clk);
@@ -371,9 +378,427 @@ module axi_lite_arbiter_tb;
 
         repeat(1) @(posedge clk);
         m_axi_bready  = 'b000;
+
+
+
+        //////////////////////////TEST CASE 4: 3'b010////////////////////////////
+        repeat(20) @(posedge clk);
+        m_axi_awvalid = 'b010;
+        m_axi_wvalid  = 'b010;
+        m_axi_bready  = 'b010;
+
+        //master 0
+        repeat(7) @(posedge clk);
+        s_axi_awready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_awready = 0;
+        s_axi_wready = 1;
         
-        // repeat(19) @(posedge clk);
-        // s_axi_awready= 0; m_axi_awvalid = 0; s_axi_awready = 0;
+        repeat(1) @(posedge clk);
+        s_axi_wready = 0;
+        m_axi_awvalid = 'b000;
+        s_axi_bvalid = 1;
+
+        repeat(1) @(posedge clk);
+        m_axi_wvalid  = 'b000;
+        s_axi_bvalid = 0;
+
+        repeat(1) @(posedge clk);
+        m_axi_bready  = 'b000;
+
+
+        //master 1
+        repeat(7) @(posedge clk);
+        s_axi_awready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_awready = 0;
+        s_axi_wready = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_wready = 0;
+        m_axi_awvalid = 'b000;
+        s_axi_bvalid = 1;
+
+        repeat(1) @(posedge clk);
+        m_axi_wvalid  = 'b000;
+        s_axi_bvalid = 0;
+
+        repeat(1) @(posedge clk);
+        m_axi_bready  = 'b000;
+
+
+        //master 2
+        repeat(7) @(posedge clk);
+        s_axi_awready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_awready = 0;
+        s_axi_wready = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_wready = 0;
+        m_axi_awvalid = 'b000;
+        s_axi_bvalid = 1;
+
+        repeat(1) @(posedge clk);
+        m_axi_wvalid  = 'b000;
+        s_axi_bvalid = 0;
+
+        repeat(1) @(posedge clk);
+        m_axi_bready  = 'b000;
+
+
+        //////////////////////////TEST CASE 5: 3'b011////////////////////////////
+        repeat(20) @(posedge clk);
+        m_axi_awvalid = 'b011;
+        m_axi_wvalid  = 'b011;
+        m_axi_bready  = 'b011;
+
+        //master 0
+        repeat(7) @(posedge clk);
+        s_axi_awready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_awready = 0;
+        s_axi_wready = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_wready = 0;
+        m_axi_awvalid = 'b010;
+        s_axi_bvalid = 1;
+
+        repeat(1) @(posedge clk);
+        m_axi_wvalid  = 'b010;
+        s_axi_bvalid = 0;
+
+        repeat(1) @(posedge clk);
+        m_axi_bready  = 'b010;
+
+
+        //master 1
+        repeat(7) @(posedge clk);
+        s_axi_awready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_awready = 0;
+        s_axi_wready = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_wready = 0;
+        m_axi_awvalid = 'b000;
+        s_axi_bvalid = 1;
+
+        repeat(1) @(posedge clk);
+        m_axi_wvalid  = 'b000;
+        s_axi_bvalid = 0;
+
+        repeat(1) @(posedge clk);
+        m_axi_bready  = 'b000;
+
+
+        //master 2
+        repeat(7) @(posedge clk);
+        s_axi_awready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_awready = 0;
+        s_axi_wready = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_wready = 0;
+        m_axi_awvalid = 'b000;
+        s_axi_bvalid = 1;
+
+        repeat(1) @(posedge clk);
+        m_axi_wvalid  = 'b000;
+        s_axi_bvalid = 0;
+
+        repeat(1) @(posedge clk);
+        m_axi_bready  = 'b000;
+
+
+        //////////////////////////TEST CASE 6: 3'b100////////////////////////////
+        repeat(20) @(posedge clk);
+        m_axi_awvalid = 'b100;
+        m_axi_wvalid  = 'b100;
+        m_axi_bready  = 'b100;
+
+        //master 0
+        repeat(7) @(posedge clk);
+        s_axi_awready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_awready = 0;
+        s_axi_wready = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_wready = 0;
+        m_axi_awvalid = 'b000;
+        s_axi_bvalid = 1;
+
+        repeat(1) @(posedge clk);
+        m_axi_wvalid  = 'b000;
+        s_axi_bvalid = 0;
+
+        repeat(1) @(posedge clk);
+        m_axi_bready  = 'b000;
+
+
+        // //master 1
+        // repeat(7) @(posedge clk);
+        // s_axi_awready = 1;
+        // repeat(1) @(posedge clk);
+        // s_axi_awready = 0;
+        // s_axi_wready = 1;
+        
+        // repeat(1) @(posedge clk);
+        // s_axi_wready = 0;
+        // m_axi_awvalid = 'b000;
+        // s_axi_bvalid = 1;
+
+        // repeat(1) @(posedge clk);
+        // m_axi_wvalid  = 'b000;
+        // s_axi_bvalid = 0;
+
+        // repeat(1) @(posedge clk);
+        // m_axi_bready  = 'b000;
+
+
+        // //master 2
+        // repeat(7) @(posedge clk);
+        // s_axi_awready = 1;
+        // repeat(1) @(posedge clk);
+        // s_axi_awready = 0;
+        // s_axi_wready = 1;
+        
+        // repeat(1) @(posedge clk);
+        // s_axi_wready = 0;
+        // m_axi_awvalid = 'b000;
+        // s_axi_bvalid = 1;
+
+        // repeat(1) @(posedge clk);
+        // m_axi_wvalid  = 'b000;
+        // s_axi_bvalid = 0;
+
+        // repeat(1) @(posedge clk);
+        // m_axi_bready  = 'b000;
+
+
+        //////////////////////////TEST CASE 7: 3'b101////////////////////////////
+        repeat(20) @(posedge clk);
+        m_axi_awvalid = 'b101;
+        m_axi_wvalid  = 'b101;
+        m_axi_bready  = 'b101;
+
+        //master 0
+        repeat(7) @(posedge clk);
+        s_axi_awready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_awready = 0;
+        s_axi_wready = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_wready = 0;
+        m_axi_awvalid = 'b100;
+        s_axi_bvalid = 1;
+
+        repeat(1) @(posedge clk);
+        m_axi_wvalid  = 'b100;
+        s_axi_bvalid = 0;
+
+        repeat(1) @(posedge clk);
+        m_axi_bready  = 'b100;
+
+
+        //master 1
+        repeat(7) @(posedge clk);
+        s_axi_awready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_awready = 0;
+        s_axi_wready = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_wready = 0;
+        m_axi_awvalid = 'b000;
+        s_axi_bvalid = 1;
+
+        repeat(1) @(posedge clk);
+        m_axi_wvalid  = 'b000;
+        s_axi_bvalid = 0;
+
+        repeat(1) @(posedge clk);
+        m_axi_bready  = 'b000;
+
+
+        //master 2
+        repeat(7) @(posedge clk);
+        s_axi_awready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_awready = 0;
+        s_axi_wready = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_wready = 0;
+        m_axi_awvalid = 'b000;
+        s_axi_bvalid = 1;
+
+        repeat(1) @(posedge clk);
+        m_axi_wvalid  = 'b000;
+        s_axi_bvalid = 0;
+
+        repeat(1) @(posedge clk);
+        m_axi_bready  = 'b000;
+
+
+        //////////////////////////TEST CASE 8: 3'b110////////////////////////////
+        repeat(20) @(posedge clk);
+        m_axi_awvalid = 'b110;
+        m_axi_wvalid  = 'b110;
+        m_axi_bready  = 'b110;
+
+        //master 0
+        // repeat(7) @(posedge clk);
+        // s_axi_awready = 1;
+        // repeat(1) @(posedge clk);
+        // s_axi_awready = 0;
+        // s_axi_wready = 1;
+        
+        // repeat(1) @(posedge clk);
+        // s_axi_wready = 0;
+        // m_axi_awvalid = 'b110;
+        // s_axi_bvalid = 1;
+
+        // repeat(1) @(posedge clk);
+        // m_axi_wvalid  = 'b110;
+        // s_axi_bvalid = 0;
+
+        // repeat(1) @(posedge clk);
+        // m_axi_bready  = 'b110;
+
+
+        //master 1
+        repeat(7) @(posedge clk);
+        s_axi_awready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_awready = 0;
+        s_axi_wready = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_wready = 0;
+        m_axi_awvalid = 'b100;
+        s_axi_bvalid = 1;
+
+        repeat(1) @(posedge clk);
+        m_axi_wvalid  = 'b100;
+        s_axi_bvalid = 0;
+
+        repeat(1) @(posedge clk);
+        m_axi_bready  = 'b100;
+
+
+        //master 2
+        repeat(7) @(posedge clk);
+        s_axi_awready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_awready = 0;
+        s_axi_wready = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_wready = 0;
+        m_axi_awvalid = 'b000;
+        s_axi_bvalid = 1;
+
+        repeat(1) @(posedge clk);
+        m_axi_wvalid  = 'b000;
+        s_axi_bvalid = 0;
+
+        repeat(1) @(posedge clk);
+        m_axi_bready  = 'b000;
+        
+
+        //////////////////////////TEST CASE 9: 3'b111////////////////////////////
+        repeat(20) @(posedge clk);
+        m_axi_awvalid = 'b111;
+        m_axi_wvalid  = 'b111;
+        m_axi_bready  = 'b111;
+        m_axi_awprot_0 = 'b001; 
+        m_axi_awprot_1 = 'b011; 
+        m_axi_awprot_2 = 'b100;
+
+        m_axi_wstrb_0 = 'b1111; 
+        m_axi_wstrb_1 = 'b1101;
+        m_axi_wstrb_2 = 'b1011;
+
+        //master 0
+        repeat(7) @(posedge clk);
+        s_axi_awready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_awready = 0;
+        s_axi_wready = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_wready = 0;
+        m_axi_awvalid = 'b110;
+        s_axi_bvalid = 1;
+
+        repeat(1) @(posedge clk);
+        m_axi_wvalid  = 'b110;
+        s_axi_bvalid = 0;
+
+        repeat(1) @(posedge clk);
+        m_axi_bready  = 'b110;
+
+
+        //master 1
+        repeat(20) @(posedge clk);
+        s_axi_awready = 0;
+        repeat(1) @(posedge clk);
+        s_axi_awready = 0;
+        s_axi_wready = 0;
+        
+        repeat(1) @(posedge clk);
+        s_axi_wready = 0;
+        m_axi_awvalid = 'b100;
+        s_axi_bvalid = 0;
+
+        repeat(1) @(posedge clk);
+        m_axi_wvalid  = 'b100;
+        s_axi_bvalid = 0;
+
+        repeat(1) @(posedge clk);
+        m_axi_bready  = 'b100;
+
+
+        //master 2
+        repeat(5) @(posedge clk);
+        s_axi_awready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_awready = 0;
+        s_axi_wready = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_wready = 0;
+        m_axi_awvalid = 'b000;
+        s_axi_bvalid = 1;
+
+        repeat(1) @(posedge clk);
+        m_axi_wvalid  = 'b000;
+        s_axi_bvalid = 0;
+
+        repeat(1) @(posedge clk);
+        m_axi_bready  = 'b000;
+
+
+        //////////////////////////TEST CASE 10: 3'b111////////////////////////////
+        repeat(20) @(posedge clk);
+        m_axi_awvalid = 'b111;
+        m_axi_wvalid  = 'b111;
+        m_axi_bready  = 'b111;
+        m_axi_awprot_0 = 'b001; 
+        m_axi_awprot_1 = 'b011; 
+        m_axi_awprot_2 = 'b100;
+
+        m_axi_wstrb_0 = 'b1111; 
+        m_axi_wstrb_1 = 'b1101;
+        m_axi_wstrb_2 = 'b1011;
+
+    
+        
         
     end
 

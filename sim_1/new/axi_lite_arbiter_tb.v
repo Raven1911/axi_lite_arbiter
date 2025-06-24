@@ -751,6 +751,7 @@ module axi_lite_arbiter_tb;
         s_axi_awready = 0;
         s_axi_wready = 0;
         
+        
         repeat(1) @(posedge clk);
         s_axi_wready = 0;
         m_axi_awvalid = 'b100;

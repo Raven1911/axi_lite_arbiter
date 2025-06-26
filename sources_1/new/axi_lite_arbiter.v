@@ -386,7 +386,7 @@ module axi_lite_arbiter #(
     
     timer_write_channel timer_write(
         .clk(clk),
-        .resetn(resetn),
+        .resetn(resetn & (!active_capture_reg)),
 
         .s_awready(i_s_axi_awready),
         .s_wready(i_s_axi_wready),
@@ -540,9 +540,9 @@ module timer_write_channel(
         case (state_quantum_reg)
             IDLE: begin
                 enb_quantum_time_next = 0;
-                if (s_start_quantum == 1) begin
+                if (s_start_quantum == 1  && enb_quantum_time_reg == 0) begin //&& enb_quantum_time_reg == 0
                     state_quantum_next = START;
-                    count_quantum_next = count_quantum_next + 1;
+                    count_quantum_next = 0; //count_quantum_next + 1;
                 end
             end
             START: begin

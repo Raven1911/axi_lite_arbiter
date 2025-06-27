@@ -798,9 +798,76 @@ module axi_lite_arbiter_tb;
         m_axi_wstrb_1 = 'b1101;
         m_axi_wstrb_2 = 'b1011;
 
+
+        repeat(200) @(posedge clk);
+        m_axi_awvalid = 'b000;
+        m_axi_wvalid  = 'b000;
+        m_axi_bready  = 'b000;
+
     
+
+        //////////////////////////////test bench read channel?????????????????
+        repeat(20) @(posedge clk);
+        m_axi_arvalid = 'b111;
+        m_axi_rready  = 'b111;
+
+
+        m_axi_araddr_0 = 'h1000_1000;
+        m_axi_araddr_1 = 'h2000_2000;
+        m_axi_araddr_2 = 'h3000_3000;
+
+        //master 0
+        repeat(7) @(posedge clk);
+        s_axi_arready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_arready = 0;
+        s_axi_rdata   = 'hABCD_FFFF;
+        s_axi_rvalid  = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_rvalid =  0;
+        m_axi_arvalid = 'b110;
+
+        repeat(1) @(posedge clk);
+        m_axi_rready = 'b110;
+
+
+        //master 1
+        repeat(7) @(posedge clk);
+        s_axi_arready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_arready = 0;
+        s_axi_rdata   = 'hFFFF_FFFF;
+        s_axi_rvalid  = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_rvalid =  0;
+        m_axi_arvalid = 'b100;
+
+        repeat(1) @(posedge clk);
+        m_axi_rready = 'b100;
+
+
+        //master 1
+        repeat(7) @(posedge clk);
+        s_axi_arready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_arready = 0;
+        s_axi_rdata   = 'hCCCC_BBBB;
+        s_axi_rvalid  = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_rvalid =  0;
+        m_axi_arvalid = 'b000;
+
+        repeat(1) @(posedge clk);
+        m_axi_rready = 'b000;
         
         
+        ////////////////////////
+        repeat(20) @(posedge clk);
+        m_axi_arvalid = 'b111;
+        m_axi_rready  = 'b111;
     end
 
     // Monitor slave outputs

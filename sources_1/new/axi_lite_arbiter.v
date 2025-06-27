@@ -138,10 +138,10 @@ module axi_lite_arbiter #(
     reg     [DATA_WIDTH-1:0]    r_select_m_axi_rdata1_reg, r_select_m_axi_rdata1_next;
     reg     [DATA_WIDTH-1:0]    r_select_m_axi_rdata2_reg, r_select_m_axi_rdata2_next;
 
-    // wire                        enb_awvalid, enb_wvalid, enb_bready, enb_quantum_time;
+
     wire                        w_enb_awvalid, w_enb_wvalid, w_enb_bready, w_enb_quantum_time;
     wire                        r_enb_arvalid, r_enb_rready, r_enb_quantum_time;
-    integer i;
+
     //wirte channel sequential circuit
     always @(posedge clk or negedge resetn) begin
         if (~resetn) begin

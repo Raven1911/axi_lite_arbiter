@@ -101,9 +101,6 @@ module axi_lite_arbiter #(
 
     //variable
     reg     [3:0]               state_reg, state_next;
-    reg     [NUM_MASTERS-1:0]   capture_awvalid_reg, capture_awvalid_next;
-
-
     reg                         active_capture_reg, active_capture_next;
 
     //reg_IO
@@ -121,15 +118,13 @@ module axi_lite_arbiter #(
     reg     [NUM_MASTERS-1:0]   select_m_axi_bvalid_reg, select_m_axi_bvalid_next; 
 
 
-    wire enb_awvalid, enb_wvalid, enb_bready, enb_quantum_time;
+    wire                        enb_awvalid, enb_wvalid, enb_bready, enb_quantum_time;
 
     //wirte channel sequential circuit
     always @(posedge clk or negedge resetn) begin
         if (~resetn) begin
             state_reg                   <= START;
             active_capture_reg          <= 0;
-            capture_awvalid_reg         <= 0;
-
 
             select_s_axi_awaddr_reg     <= 0;
             select_s_axi_awvalid_reg    <= 0;
@@ -145,7 +140,6 @@ module axi_lite_arbiter #(
         else begin
             state_reg <= state_next;
             active_capture_reg <= active_capture_next;
-            capture_awvalid_reg <= capture_awvalid_next;
 
             select_s_axi_awaddr_reg     <=      select_s_axi_awaddr_next;
             select_s_axi_awvalid_reg    <=      select_s_axi_awvalid_next;
@@ -165,7 +159,6 @@ module axi_lite_arbiter #(
     //wirte channel combi circuit
     always @(*) begin
         active_capture_next         =   active_capture_reg;
-        capture_awvalid_next        =   select_s_axi_awvalid_reg;
         state_next                  =   state_reg;
 
         select_s_axi_awaddr_next    =   select_s_axi_awaddr_reg;
@@ -191,43 +184,30 @@ module axi_lite_arbiter #(
                 select_s_axi_bready_next    =   0;
                 select_m_axi_bvalid_next    =   0;
 
-                if (active_capture_reg) begin
-                    capture_awvalid_next = i_m_axi_awvalid; //;
-                end
-                else capture_awvalid_next = 0;
-
                 if (|i_m_axi_awvalid == 1) begin
                     active_capture_next = 1;
-                    case (capture_awvalid_reg)
+                    case (i_m_axi_awvalid) //capture_awvalid_reg
                         'b001: begin
                             state_next = S1_0;
-                            active_capture_next = 0;   
                         end 
                         'b010: begin
                             state_next = S2_1;
-                            active_capture_next = 0;   
                         end 
                         'b011: begin
                             state_next = S3_0;
-                            active_capture_next = 0;   
                         end 
                         'b100: begin
                             state_next = S4_2;
-                            active_capture_next = 0;   
                         end 
                         'b101: begin
                             state_next = S5_0;
-                            active_capture_next = 0;   
                         end 
                         'b110: begin
                             state_next = S6_1;
-                            active_capture_next = 0;   
                         end 
                         'b111: begin
-                            state_next = S7_0;
-                            active_capture_next = 0;   
+                            state_next = S7_0; 
                         end
-
                         default: begin
                             state_next = START;
                         end 
@@ -237,7 +217,7 @@ module axi_lite_arbiter #(
                 end  
             end 
             S1_0, S3_0, S5_0, S7_0: begin
-                capture_awvalid_next         =   0;
+                active_capture_next = 0;
                 select_s_axi_awaddr_next    =   i_m_axi_awaddr[0];
                 select_s_axi_awvalid_next   =   i_m_axi_awvalid[0];
                 select_m_axi_awready_next   =   {1'b0, 1'b0, i_s_axi_awready};
@@ -277,7 +257,7 @@ module axi_lite_arbiter #(
             end
 
             S2_1, S3_1, S6_1, S7_1: begin
-                capture_awvalid_next         =   0;
+                active_capture_next = 0;
                 select_s_axi_awaddr_next    =   i_m_axi_awaddr[1];
                 select_s_axi_awvalid_next   =   i_m_axi_awvalid[1];
                 select_m_axi_awready_next   =   {1'b0, i_s_axi_awready, 1'b0};
@@ -318,7 +298,7 @@ module axi_lite_arbiter #(
             end
 
             S4_2, S5_2, S6_2, S7_2: begin
-                capture_awvalid_next         =   0;
+                active_capture_next = 0;
                 select_s_axi_awaddr_next    =   i_m_axi_awaddr[2];
                 select_s_axi_awvalid_next   =   i_m_axi_awvalid[2];
                 select_m_axi_awready_next   =   {i_s_axi_awready, 1'b0, 1'b0};
@@ -496,7 +476,6 @@ module timer_write_channel(
         case ({s_bvalid, s_wready, s_awready})
             'b001: begin: signal_awready
                 flag_awvalid_next = 1;
-            
             end
             'b010: begin: signal_wready
                 flag_wvalid_next = 1;
@@ -540,7 +519,7 @@ module timer_write_channel(
         case (state_quantum_reg)
             IDLE: begin
                 enb_quantum_time_next = 0;
-                if (s_start_quantum == 1  && enb_quantum_time_reg == 0) begin //&& enb_quantum_time_reg == 0
+                if (s_start_quantum == 1  && enb_quantum_time_reg == 0) begin
                     state_quantum_next = START;
                     count_quantum_next = 0; //count_quantum_next + 1;
                 end

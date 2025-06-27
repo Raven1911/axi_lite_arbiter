@@ -53,49 +53,28 @@ module axi_lite_arbiter #(
     output      [NUM_MASTERS-1:0][DATA_WIDTH-1:0]    o_m_axi_rdata,      // Master Read Data
 
     // Arbiter outputs
-    output                                           o_s_axi_awvalid,    // Master Write Address Valid
-    input                                            i_s_axi_awready,    // Master Write Address Ready
-    output                       [ADDR_WIDTH-1:0]    o_s_axi_awaddr,     // Master Write Address
+    output                                           o_s_axi_awvalid,    // Slave Write Address Valid
+    input                                            i_s_axi_awready,    // Slave Write Address Ready
+    output                       [ADDR_WIDTH-1:0]    o_s_axi_awaddr,     // Slave Write Address
 
-    output                       [2:0]               o_s_axi_awprot,     // Master Write Protection
-    output                                           o_s_axi_wvalid,     // Master Write Data Valid
-    input                                            i_s_axi_wready,     // Master Write Data Ready
-    output                       [DATA_WIDTH-1:0]    o_s_axi_wdata,      // Master Write Data
-    output                       [DATA_WIDTH/8-1:0]  o_s_axi_wstrb,      // Master Write Strobe
+    output                       [2:0]               o_s_axi_awprot,     // Slave Write Protection
+    output                                           o_s_axi_wvalid,     // Slave Write Data Valid
+    input                                            i_s_axi_wready,     // Slave Write Data Ready
+    output                       [DATA_WIDTH-1:0]    o_s_axi_wdata,      // Slave Write Data
+    output                       [DATA_WIDTH/8-1:0]  o_s_axi_wstrb,      // Slave Write Strobe
 
-    input                                            i_s_axi_bvalid,     // Master Write Response Valid
-    output                                           o_s_axi_bready,     // Master Write Response Ready
+    input                                            i_s_axi_bvalid,     // Slave Write Response Valid
+    output                                           o_s_axi_bready,     // Slave Write Response Ready
 
-    output                                           o_s_axi_arvalid,    // Master Read Address Valid
-    input                                            i_s_axi_arready,    // Master Read Address Ready
-    output                       [ADDR_WIDTH-1:0]    o_s_axi_araddr,     // Master Read Address
-    output                       [2:0]               o_s_axi_arprot,     // Master Read Protection
-    input                                            i_s_axi_rvalid,     // Master Read Data Valid
-    output                                           o_s_axi_rready,     // Master Read Data Ready
-    input                        [DATA_WIDTH-1:0]    i_s_axi_rdata       // Master Read Data
+    output                                           o_s_axi_arvalid,    // Slave Read Address Valid
+    input                                            i_s_axi_arready,    // Slave Read Address Ready
+    output                       [ADDR_WIDTH-1:0]    o_s_axi_araddr,     // Slave Read Address
+    output                       [2:0]               o_s_axi_arprot,     // Slave Read Protection
+    input                                            i_s_axi_rvalid,     // Slave Read Data Valid
+    output                                           o_s_axi_rready,     // Slave Read Data Ready
+    input                        [DATA_WIDTH-1:0]    i_s_axi_rdata       // Slave Read Data
 );
  
-    //Label State
-    // localparam  START   =   'd0,
-    //             //state child
-    //             S1_0    =   'd1,
-
-    //             S2_1    =   'd2,
-                
-    //             S3_0    =   'd3,
-    //             S3_1    =   'd4,
-
-    //             S4_2    =   'd5,
-
-    //             S5_0    =   'd6,
-    //             S5_2    =   'd7,
-
-    //             S6_1    =   'd8,
-    //             S6_2    =   'd9,
-
-    //             S7_0    =   'd10,
-    //             S7_1    =   'd11,
-    //             S7_2    =   'd12;
 
     // Write Channel States
     localparam  W_START   =   'd0,
@@ -127,27 +106,6 @@ module axi_lite_arbiter #(
                 R_S7_1    =   'd11,
                 R_S7_2    =   'd12;
         
-
-
-    //variable
-    // reg     [3:0]               state_reg, state_next;
-    // reg                         active_capture_reg, active_capture_next;
-
-    // //reg_IO
-    // reg     [ADDR_WIDTH-1:0]    select_s_axi_awaddr_reg, select_s_axi_awaddr_next;
-    // reg                         select_s_axi_awvalid_reg, select_s_axi_awvalid_next;
-    // reg     [NUM_MASTERS-1:0]   select_m_axi_awready_reg, select_m_axi_awready_next;
-
-    // reg     [2:0]               select_s_axi_awprot_reg, select_s_axi_awprot_next;
-    // reg                         select_s_axi_wvalid_reg, select_s_axi_wvalid_next;
-    // reg     [NUM_MASTERS-1:0]   select_m_axi_wready_reg, select_m_axi_wready_next;
-    // reg     [DATA_WIDTH-1:0]    select_s_axi_wdata_reg, select_s_axi_wdata_next;
-    // reg     [DATA_WIDTH/8-1:0]  select_s_axi_wstrb_reg, select_s_axi_wstrb_next;
-    
-    // reg                         select_s_axi_bready_reg, select_s_axi_bready_next;
-    // reg     [NUM_MASTERS-1:0]   select_m_axi_bvalid_reg, select_m_axi_bvalid_next; 
-
-
     // Write Channel Variables
     reg     [3:0]               w_state_reg, w_state_next;
     reg                         w_active_capture_reg, w_active_capture_next;
@@ -187,20 +145,6 @@ module axi_lite_arbiter #(
     //wirte channel sequential circuit
     always @(posedge clk or negedge resetn) begin
         if (~resetn) begin
-            // state_reg                   <= START;
-            // active_capture_reg          <= 0;
-
-            // select_s_axi_awaddr_reg     <= 0;
-            // select_s_axi_awvalid_reg    <= 0;
-            // select_m_axi_awready_reg    <= 0;
-            // select_s_axi_awprot_reg     <= 0;
-            // select_s_axi_wvalid_reg     <= 0;
-            // select_m_axi_wready_reg     <= 0;
-            // select_s_axi_wdata_reg      <= 0;
-            // select_s_axi_wstrb_reg      <= 0;
-            // select_s_axi_bready_reg     <= 0;
-            // select_m_axi_bvalid_reg     <= 0;
-
             w_state_reg                   <= W_START;
             w_active_capture_reg          <= 0;
 
@@ -217,20 +161,6 @@ module axi_lite_arbiter #(
 
         end
         else begin
-            // state_reg <= state_next;
-            // active_capture_reg <= active_capture_next;
-
-            // select_s_axi_awaddr_reg     <=      select_s_axi_awaddr_next;
-            // select_s_axi_awvalid_reg    <=      select_s_axi_awvalid_next;
-            // select_m_axi_awready_reg    <=      select_m_axi_awready_next;
-            // select_s_axi_awprot_reg     <=      select_s_axi_awprot_next;
-            // select_s_axi_wvalid_reg     <=      select_s_axi_wvalid_next;
-            // select_m_axi_wready_reg     <=      select_m_axi_wready_next;
-            // select_s_axi_wdata_reg      <=      select_s_axi_wdata_next;
-            // select_s_axi_wstrb_reg      <=      select_s_axi_wstrb_next;
-            // select_s_axi_bready_reg     <=      select_s_axi_bready_next;
-            // select_m_axi_bvalid_reg     <=      select_m_axi_bvalid_next;
-
             w_state_reg                   <= w_state_next;
             w_active_capture_reg          <= w_active_capture_next;
 
@@ -252,20 +182,6 @@ module axi_lite_arbiter #(
 
     //wirte channel combi circuit
     always @(*) begin
-        // active_capture_next         =   active_capture_reg;
-        // state_next                  =   state_reg;
-
-        // select_s_axi_awaddr_next    =   select_s_axi_awaddr_reg;
-        // select_s_axi_awvalid_next   =   select_s_axi_awvalid_reg;
-        // select_m_axi_awready_next   =   select_m_axi_awready_reg;
-        // select_s_axi_awprot_next    =   select_s_axi_awprot_reg;
-        // select_s_axi_wvalid_next    =   select_s_axi_wvalid_reg;
-        // select_m_axi_wready_next    =   select_m_axi_wready_reg;
-        // select_s_axi_wdata_next     =   select_s_axi_wdata_reg;
-        // select_s_axi_wstrb_next     =   select_s_axi_wstrb_reg;
-        // select_s_axi_bready_next    =   select_s_axi_bready_reg;
-        // select_m_axi_bvalid_next    =   select_m_axi_bvalid_reg;
-
         w_active_capture_next         = w_active_capture_reg;
         w_state_next                  = w_state_reg;
         w_select_s_axi_awaddr_next    = w_select_s_axi_awaddr_reg;
@@ -279,180 +195,6 @@ module axi_lite_arbiter #(
         w_select_s_axi_bready_next    = w_select_s_axi_bready_reg;
         w_select_m_axi_bvalid_next    = w_select_m_axi_bvalid_reg;
 
-        // case (state_reg)
-        //     START: begin
-        //         select_s_axi_awaddr_next    =   0;
-        //         select_s_axi_awvalid_next   =   0;
-        //         select_m_axi_awready_next   =   0;
-        //         select_s_axi_awprot_next    =   0;
-        //         select_s_axi_wvalid_next    =   0;
-        //         select_m_axi_wready_next    =   0;
-        //         select_s_axi_wdata_next     =   0;
-        //         select_s_axi_wstrb_next     =   0;
-        //         select_s_axi_bready_next    =   0;
-        //         select_m_axi_bvalid_next    =   0;
-
-        //         if (|i_m_axi_awvalid == 1) begin
-        //             active_capture_next = 1;
-        //             case (i_m_axi_awvalid) //capture_awvalid_reg
-        //                 'b001: begin
-        //                     state_next = S1_0;
-        //                 end 
-        //                 'b010: begin
-        //                     state_next = S2_1;
-        //                 end 
-        //                 'b011: begin
-        //                     state_next = S3_0;
-        //                 end 
-        //                 'b100: begin
-        //                     state_next = S4_2;
-        //                 end 
-        //                 'b101: begin
-        //                     state_next = S5_0;
-        //                 end 
-        //                 'b110: begin
-        //                     state_next = S6_1;
-        //                 end 
-        //                 'b111: begin
-        //                     state_next = S7_0; 
-        //                 end
-        //                 default: begin
-        //                     state_next = START;
-        //                 end 
-                        
-        //             endcase
-                       
-        //         end  
-        //     end 
-        //     S1_0, S3_0, S5_0, S7_0: begin
-        //         active_capture_next = 0;
-        //         select_s_axi_awaddr_next    =   i_m_axi_awaddr[0];
-        //         select_s_axi_awvalid_next   =   i_m_axi_awvalid[0];
-        //         select_m_axi_awready_next   =   {1'b0, 1'b0, i_s_axi_awready};
-                
-        //         select_s_axi_awprot_next    =   i_m_axi_awprot[0];
-        //         select_s_axi_wvalid_next    =   i_m_axi_wvalid[0];
-        //         select_m_axi_wready_next    =   {1'b0, 1'b0, i_s_axi_wready};
-        //         select_s_axi_wdata_next     =   i_m_axi_wdata[0];
-        //         select_s_axi_wstrb_next     =   i_m_axi_wstrb[0];
-
-        //         select_m_axi_bvalid_next    =   {1'b0, 1'b0, i_s_axi_bvalid};
-        //         select_s_axi_bready_next    =   i_m_axi_bready[0];
-
-        //         //branch
-        //         case (state_reg)
-        //             S1_0: begin
-        //                 if (((select_m_axi_bvalid_reg[0] == 1) && (i_m_axi_bready[0] == 1)) || (enb_quantum_time == 1))
-        //                 state_next = START;
-        //             end
-        //             S3_0: begin
-        //                 if (((select_m_axi_bvalid_reg[0] == 1) && (i_m_axi_bready[0] == 1)) || (enb_quantum_time == 1))
-        //                 state_next = S3_1;
-        //             end
-        //             S5_0: begin
-        //                 if (((select_m_axi_bvalid_reg[0] == 1) && (i_m_axi_bready[0] == 1)) || (enb_quantum_time == 1))
-        //                 state_next = S5_2;
-        //             end
-        //             S7_0: begin
-        //                 if (((select_m_axi_bvalid_reg[0] == 1) && (i_m_axi_bready[0] == 1)) || (enb_quantum_time == 1))
-        //                 state_next = S7_1;
-        //             end 
-
-        //             default: begin
-                      
-        //             end
-        //         endcase
-        //     end
-
-        //     S2_1, S3_1, S6_1, S7_1: begin
-        //         active_capture_next = 0;
-        //         select_s_axi_awaddr_next    =   i_m_axi_awaddr[1];
-        //         select_s_axi_awvalid_next   =   i_m_axi_awvalid[1];
-        //         select_m_axi_awready_next   =   {1'b0, i_s_axi_awready, 1'b0};
-
-        //         select_s_axi_awprot_next    =   i_m_axi_awprot[1];
-        //         select_s_axi_wvalid_next    =   i_m_axi_wvalid[1];
-        //         select_m_axi_wready_next    =   {1'b0, i_s_axi_wready, 1'b0};
-        //         select_s_axi_wdata_next     =   i_m_axi_wdata[1];
-        //         select_s_axi_wstrb_next     =   i_m_axi_wstrb[1];
-
-        //         select_m_axi_bvalid_next    =   {1'b0, i_s_axi_bvalid, 1'b0};
-        //         select_s_axi_bready_next    =   i_m_axi_bready[1];
-
-        //         //branch
-        //         case (state_reg)
-        //             S2_1: begin
-        //                 if (((select_m_axi_bvalid_reg[1] == 1) && (i_m_axi_bready[1] == 1)) || (enb_quantum_time == 1))
-        //                 state_next = START;
-        //             end
-        //             S3_1: begin
-        //                 if (((select_m_axi_bvalid_reg[1] == 1) && (i_m_axi_bready[1] == 1)) || (enb_quantum_time == 1))
-        //                 state_next = START;
-        //             end
-        //             S6_1: begin
-        //                 if (((select_m_axi_bvalid_reg[1] == 1) && (i_m_axi_bready[1] == 1)) || (enb_quantum_time == 1))
-        //                 state_next = S6_2;
-        //             end
-        //             S7_1: begin
-        //                 if (((select_m_axi_bvalid_reg[1] == 1) && (i_m_axi_bready[1] == 1)) || (enb_quantum_time == 1))
-        //                 state_next = S7_2;
-        //             end 
-
-        //             default: begin
-                      
-        //             end
-        //         endcase
-                
-        //     end
-
-        //     S4_2, S5_2, S6_2, S7_2: begin
-        //         active_capture_next = 0;
-        //         select_s_axi_awaddr_next    =   i_m_axi_awaddr[2];
-        //         select_s_axi_awvalid_next   =   i_m_axi_awvalid[2];
-        //         select_m_axi_awready_next   =   {i_s_axi_awready, 1'b0, 1'b0};
-
-        //         select_s_axi_awprot_next    =   i_m_axi_awprot[2];
-        //         select_s_axi_wvalid_next    =   i_m_axi_wvalid[2];
-        //         select_m_axi_wready_next    =   {i_s_axi_wready, 1'b0, 1'b0};
-        //         select_s_axi_wdata_next     =   i_m_axi_wdata[2];
-        //         select_s_axi_wstrb_next     =   i_m_axi_wstrb[2];
-                
-        //         select_m_axi_bvalid_next    =   {i_s_axi_bvalid, 1'b0, 1'b0};
-        //         select_s_axi_bready_next    =   i_m_axi_bready[2];
-
-        //         //branch
-        //         case (state_reg)
-        //             S4_2: begin
-        //                 if (((select_m_axi_bvalid_reg[2] == 1) && (i_m_axi_bready[2] == 1)) || (enb_quantum_time == 1))
-        //                 state_next = START;
-        //             end
-        //             S5_2: begin
-        //                 if (((select_m_axi_bvalid_reg[2] == 1) && (i_m_axi_bready[2] == 1)) || (enb_quantum_time == 1))
-        //                 state_next = START;
-        //             end
-        //             S6_2: begin
-        //                 if (((select_m_axi_bvalid_reg[2] == 1) && (i_m_axi_bready[2] == 1)) || (enb_quantum_time == 1))
-        //                 state_next = START;
-        //             end
-        //             S7_2: begin
-        //                 if (((select_m_axi_bvalid_reg[2] == 1) && (i_m_axi_bready[2] == 1)) || (enb_quantum_time == 1))
-        //                 state_next = START;
-        //             end 
-
-        //             default: begin
-                      
-        //             end
-        //         endcase
-                
-        //     end
-
-        //     default: begin
-        //         state_next = START;
-        //     end
-
-        // endcase
-
-        
         case (w_state_reg)
             W_START: begin
                 w_select_s_axi_awaddr_next    = 0;
@@ -814,22 +556,6 @@ module axi_lite_arbiter #(
 
 
 
-    // //write Adress
-    // assign  o_s_axi_awaddr      =   select_s_axi_awaddr_reg;
-    // assign  o_s_axi_awvalid     =   (enb_awvalid) ? 0 : select_s_axi_awvalid_reg;
-    // assign  o_m_axi_awready     =   select_m_axi_awready_reg;
-
-    // //write Protection, Data, Strobe
-    // assign  o_s_axi_awprot      =   select_s_axi_awprot_reg;
-    // assign  o_s_axi_wvalid      =   (enb_wvalid) ? 0 : select_s_axi_wvalid_reg;
-    // assign  o_m_axi_wready      =   select_m_axi_wready_reg; 
-    // assign  o_s_axi_wdata       =   select_s_axi_wdata_reg;
-    // assign  o_s_axi_wstrb       =   select_s_axi_wstrb_reg;
-
-    // // write Response
-    // assign  o_m_axi_bvalid      =   select_m_axi_bvalid_reg;
-    // assign  o_s_axi_bready      =   (enb_bready) ? 0 : select_s_axi_bready_reg;
-
    // Write Channel Assignments
     assign o_s_axi_awaddr       = w_select_s_axi_awaddr_reg;
     assign o_s_axi_awvalid      = (w_enb_awvalid) ? 0 : w_select_s_axi_awvalid_reg;
@@ -855,24 +581,6 @@ module axi_lite_arbiter #(
     assign o_m_axi_rdata[0]        = r_select_m_axi_rdata0_reg;
     assign o_m_axi_rdata[1]        = r_select_m_axi_rdata1_reg;
     assign o_m_axi_rdata[2]        = r_select_m_axi_rdata2_reg;
-
-
-
-    
-    // timer_write_channel timer_write(
-    //     .clk(clk),
-    //     .resetn(resetn & (!active_capture_reg)),
-
-    //     .s_awready(i_s_axi_awready),
-    //     .s_wready(i_s_axi_wready),
-    //     .s_bvalid(i_s_axi_bvalid),
-    //     .s_start_quantum(o_s_axi_awvalid),
-
-    //     .enb_awvalid(enb_awvalid),
-    //     .enb_wvalid(enb_wvalid),
-    //     .enb_bready(enb_bready),
-    //     .enb_quantum_time(enb_quantum_time)
-    // );
 
 
     // Write Channel Timer

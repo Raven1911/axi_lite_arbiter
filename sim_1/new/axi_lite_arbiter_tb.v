@@ -811,17 +811,16 @@ module axi_lite_arbiter_tb;
         m_axi_arvalid = 'b111;
         m_axi_rready  = 'b111;
 
-
         m_axi_araddr_0 = 'h1000_1000;
         m_axi_araddr_1 = 'h2000_2000;
         m_axi_araddr_2 = 'h3000_3000;
 
         //master 0
-        repeat(7) @(posedge clk);
+        repeat(3) @(posedge clk);
         s_axi_arready = 1;
         repeat(1) @(posedge clk);
         s_axi_arready = 0;
-        s_axi_rdata   = 'hABCD_FFFF;
+        s_axi_rdata   = 'hAAAA_AAAA;
         s_axi_rvalid  = 1;
         
         repeat(1) @(posedge clk);
@@ -833,11 +832,11 @@ module axi_lite_arbiter_tb;
 
 
         //master 1
-        repeat(7) @(posedge clk);
+        repeat(3) @(posedge clk);
         s_axi_arready = 1;
         repeat(1) @(posedge clk);
         s_axi_arready = 0;
-        s_axi_rdata   = 'hFFFF_FFFF;
+        s_axi_rdata   = 'hBBBB_BBBB;
         s_axi_rvalid  = 1;
         
         repeat(1) @(posedge clk);
@@ -849,11 +848,11 @@ module axi_lite_arbiter_tb;
 
 
         //master 1
-        repeat(7) @(posedge clk);
+        repeat(3) @(posedge clk);
         s_axi_arready = 1;
         repeat(1) @(posedge clk);
         s_axi_arready = 0;
-        s_axi_rdata   = 'hCCCC_BBBB;
+        s_axi_rdata   = 'hCCCC_CCCC;
         s_axi_rvalid  = 1;
         
         repeat(1) @(posedge clk);
@@ -862,12 +861,282 @@ module axi_lite_arbiter_tb;
 
         repeat(1) @(posedge clk);
         m_axi_rready = 'b000;
+
+
+
+        //////////////////////////////test bench read 1: 001?????????????????
+        repeat(20) @(posedge clk);
+        m_axi_arvalid = 'b001;
+        m_axi_rready  = 'b001;
+
+        m_axi_arprot_0 = 1;
+        m_axi_arprot_1 = 2;
+        m_axi_arprot_2 = 3;
+
+        m_axi_araddr_0 = 'h1000_1000;
+        m_axi_araddr_1 = 'h2000_2000;
+        m_axi_araddr_2 = 'h3000_3000;
+
+        //master 0
+        repeat(3) @(posedge clk);
+        s_axi_arready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_arready = 0;
+        s_axi_rdata   = 'hAAAA_AAAA;
+        s_axi_rvalid  = 1;
         
+        repeat(1) @(posedge clk);
+        s_axi_rvalid =  0;
+        m_axi_arvalid = 'b000;
+
+        repeat(1) @(posedge clk);
+        m_axi_rready = 'b000;
+
+        //////////////////////////////test bench read 2: 010?????????????????
+        repeat(20) @(posedge clk);
+        m_axi_arvalid = 'b010;
+        m_axi_rready  = 'b010;
+
+        m_axi_arprot_0 = 1;
+        m_axi_arprot_1 = 2;
+        m_axi_arprot_2 = 3;
+
+        m_axi_araddr_0 = 'h1000_1000;
+        m_axi_araddr_1 = 'h2000_2000;
+        m_axi_araddr_2 = 'h3000_3000;
+
+        //master 1
+        repeat(3) @(posedge clk);
+        s_axi_arready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_arready = 0;
+        s_axi_rdata   = 'hBBBB_BBBB;
+        s_axi_rvalid  = 1;
         
-        ////////////////////////
+        repeat(1) @(posedge clk);
+        s_axi_rvalid =  0;
+        m_axi_arvalid = 'b000;
+
+        repeat(1) @(posedge clk);
+        m_axi_rready = 'b000;
+
+
+        //////////////////////////////test bench read 3: 011?????????????????
+        repeat(20) @(posedge clk);
+        m_axi_arvalid = 'b011;
+        m_axi_rready  = 'b011;
+
+        m_axi_araddr_0 = 'h1000_1000;
+        m_axi_araddr_1 = 'h2000_2000;
+        m_axi_araddr_2 = 'h3000_3000;
+
+        //master 0
+        repeat(3) @(posedge clk);
+        s_axi_arready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_arready = 0;
+        s_axi_rdata   = 'hAAAA_AAAA;
+        s_axi_rvalid  = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_rvalid =  0;
+        m_axi_arvalid = 'b010;
+
+        repeat(1) @(posedge clk);
+        m_axi_rready = 'b010;
+
+
+        //master 1
+        repeat(3) @(posedge clk);
+        s_axi_arready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_arready = 0;
+        s_axi_rdata   = 'hBBBB_BBBB;
+        s_axi_rvalid  = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_rvalid =  0;
+        m_axi_arvalid = 'b000;
+
+        repeat(1) @(posedge clk);
+        m_axi_rready = 'b000;
+
+
+        //////////////////////////////test bench read 4: 100?????????????????
+        repeat(20) @(posedge clk);
+        m_axi_arvalid = 'b100;
+        m_axi_rready  = 'b100;
+
+        m_axi_arprot_0 = 1;
+        m_axi_arprot_1 = 2;
+        m_axi_arprot_2 = 3;
+
+        m_axi_araddr_0 = 'h1000_1000;
+        m_axi_araddr_1 = 'h2000_2000;
+        m_axi_araddr_2 = 'h3000_3000;
+
+        //master 2
+        repeat(3) @(posedge clk);
+        s_axi_arready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_arready = 0;
+        s_axi_rdata   = 'hCCCC_CCCC;
+        s_axi_rvalid  = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_rvalid =  0;
+        m_axi_arvalid = 'b000;
+
+        repeat(1) @(posedge clk);
+        m_axi_rready = 'b000;
+
+        //////////////////////////////test bench read 5: 101?????????????????
+        repeat(20) @(posedge clk);
+        m_axi_arvalid = 'b101;
+        m_axi_rready  = 'b101;
+
+        m_axi_arprot_0 = 1;
+        m_axi_arprot_1 = 2;
+        m_axi_arprot_2 = 3;
+
+        m_axi_araddr_0 = 'h1000_1000;
+        m_axi_araddr_1 = 'h2000_2000;
+        m_axi_araddr_2 = 'h3000_3000;
+
+        //master 0
+        repeat(3) @(posedge clk);
+        s_axi_arready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_arready = 0;
+        s_axi_rdata   = 'hAAAA_AAAA;
+        s_axi_rvalid  = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_rvalid =  0;
+        m_axi_arvalid = 'b100;
+
+        repeat(1) @(posedge clk);
+        m_axi_rready = 'b100;
+
+        //master 2
+        repeat(3) @(posedge clk);
+        s_axi_arready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_arready = 0;
+        s_axi_rdata   = 'hCCCC_CCCC;
+        s_axi_rvalid  = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_rvalid =  0;
+        m_axi_arvalid = 'b000;
+
+        repeat(1) @(posedge clk);
+        m_axi_rready = 'b000;
+
+
+
+        //////////////////////////////test bench read 5: 110?????????????????
+        repeat(20) @(posedge clk);
+        m_axi_arvalid = 'b110;
+        m_axi_rready  = 'b110;
+
+        m_axi_arprot_0 = 1;
+        m_axi_arprot_1 = 2;
+        m_axi_arprot_2 = 3;
+
+        m_axi_araddr_0 = 'h1000_1000;
+        m_axi_araddr_1 = 'h2000_2000;
+        m_axi_araddr_2 = 'h3000_3000;
+
+        //master 1
+        repeat(3) @(posedge clk);
+        s_axi_arready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_arready = 0;
+        s_axi_rdata   = 'hBBBB_BBBB;
+        s_axi_rvalid  = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_rvalid =  0;
+        m_axi_arvalid = 'b100;
+
+        repeat(1) @(posedge clk);
+        m_axi_rready = 'b100;
+
+        //master 2
+        repeat(3) @(posedge clk);
+        s_axi_arready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_arready = 0;
+        s_axi_rdata   = 'hCCCC_CCCC;
+        s_axi_rvalid  = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_rvalid =  0;
+        m_axi_arvalid = 'b000;
+
+        repeat(1) @(posedge clk);
+        m_axi_rready = 'b000;
+
+
+        //////////////////////////////test bench quantum size read channel?????????????????
         repeat(20) @(posedge clk);
         m_axi_arvalid = 'b111;
         m_axi_rready  = 'b111;
+
+        m_axi_araddr_0 = 'h1000_1000;
+        m_axi_araddr_1 = 'h2000_2000;
+        m_axi_araddr_2 = 'h3000_3000;
+
+        //master 0
+        repeat(3) @(posedge clk);
+        s_axi_arready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_arready = 0;
+        s_axi_rdata   = 'hAAAA_AAAA;
+        s_axi_rvalid  = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_rvalid =  0;
+        m_axi_arvalid = 'b110;
+
+        repeat(1) @(posedge clk);
+        m_axi_rready = 'b110;
+
+
+        //master 1
+        repeat(20) @(posedge clk);
+        s_axi_arready = 0;
+        repeat(1) @(posedge clk);
+        s_axi_arready = 0;
+        s_axi_rdata   = 'hBBBB_BBBB;
+        s_axi_rvalid  = 0;
+        
+        repeat(1) @(posedge clk);
+        s_axi_rvalid =  0;
+        m_axi_arvalid = 'b110;
+
+        repeat(1) @(posedge clk);
+        m_axi_rready = 'b110;
+
+
+        //master 1
+        repeat(3) @(posedge clk);
+        s_axi_arready = 1;
+        repeat(1) @(posedge clk);
+        s_axi_arready = 0;
+        s_axi_rdata   = 'hCCCC_CCCC;
+        s_axi_rvalid  = 1;
+        
+        repeat(1) @(posedge clk);
+        s_axi_rvalid =  0;
+        m_axi_arvalid = 'b010;
+
+        repeat(1) @(posedge clk);
+        m_axi_rready = 'b010;
+
+
+
     end
 
     // Monitor slave outputs
